@@ -4,6 +4,9 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/mhkhan27/analyticaid/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mhkhan27/analyticaid/actions/workflows/R-CMD-check.yaml)
+
+[![codecov](https://codecov.io/gh/mhkhan27/analyticaid/branch/master/graph/badge.svg?token=99gpTJv9Rz)](https://codecov.io/gh/mhkhan27/analyticaid)
+
 <!-- badges: end -->
 
 ## Overview
