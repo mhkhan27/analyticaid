@@ -30,15 +30,15 @@ find_qualitative_cols_from_kobo <-function(df,kobo_survey_sheet,additional_cols_
 #' @param x column name
 #' @export
 #'
-numbers_only <- function(x) !grepl("\\D", x)
+integer_only <- function(x) !grepl("\\D", x)
 
 #' Find all the integer column even if reads as character or factor
 #' @param df The data set
 #' @export
 #' @importFrom dplyr select_if
 
-find_interger_cols <- function(df){
-  df1 <- df |> select_if(function(x) all(numbers_only(trimws(x)),na.rm = T)) |> names()
+find_integer_cols <- function(df){
+  df1 <- df |> select_if(function(x) all(integer_only(trimws(x)),na.rm = T)) |> names()
   return(df1)
 }
 
@@ -73,7 +73,7 @@ fix_data_type <- function(df,remove_all_NA_col=T,
 
 
   ## fix_integer
-  int_cols_name <- find_interger_cols(df)
+  int_cols_name <- find_integer_cols(df)
   df <- df |> mutate_at(int_cols_name,as.integer)
 
 
