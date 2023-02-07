@@ -1,15 +1,14 @@
 
-# illuminate <img src='man/figures/illuminate.png' align="right" height="80.5" />
+# analyticaid <img src='man/figures/analyticaid.png' align="right" height="80.5" />
 
-<!-- <!-- badges: start -->
-<!-- [![CRAN status](https://www.r-pkg.org/badges/version/dplyr)](https://cran.r-project.org/package=dplyr) -->
-<!-- [![R-CMD-check](https://github.com/tidyverse/dplyr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/tidyverse/dplyr/actions/workflows/R-CMD-check.yaml) -->
-<!-- [![Codecov test coverage](https://codecov.io/gh/tidyverse/dplyr/branch/main/graph/badge.svg)](https://app.codecov.io/gh/tidyverse/dplyr?branch=main) -->
-<!-- <!-- badges: end -->
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/mhkhan27/analyticaid/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mhkhan27/analyticaid/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
 
 ## Overview
 
-illuminate is designed for making the data analysis easy and less time
+analyticaid is designed for making the data analysis easy and less time
 consuming. The package is based on tidyr, dplyr,srvyr packages. Most
 common functions are-
 
@@ -20,7 +19,7 @@ You can install the development version from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("mhkhan27/illuminate")
+devtools::install_github("mhkhan27/analyticaid")
 ```
 
 ## ***1. Read and write file***
@@ -55,7 +54,7 @@ devtools::install_github("mhkhan27/illuminate")
 ##### Step 1:: Call libraries and read data
 
 ``` r
-library(illuminate)
+library(analyticaid)
 library(tidyverse)
 
 cleaning_log <- read.csv("data/01_implementing_cleaning_log/cleaning_log.csv")
@@ -106,7 +105,7 @@ clean_data <- implement_cleaning_log(df = data,
 ##### Step 0:: Call libraries
 
 ``` r
-library(illuminate)
+library(analyticaid)
 library(tidyverse)
 library(purrr)
 library(readxl)

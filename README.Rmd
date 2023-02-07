@@ -14,13 +14,13 @@ knitr::opts_chunk$set(
 ```
 
 
-```{r example, warning= F, message=F,include = FALSE}
-library(illuminate)
+```{r example, warning= F, message=F,include = FALSE,eval=F}
+library(analyticaid)
 library(dplyr)
 library(sf)
 library(tidyr)
 ```
-# illuminate <img src='man/figures/illuminate.png' align="right" height="80.5" />
+# analyticaid <img src='man/figures/analyticaid.png' align="right" height="80.5" />
 
 
 <!-- badges: start -->
@@ -29,7 +29,7 @@ library(tidyr)
 
 
 ## Overview
-illuminate is designed for making the data analysis easy and less time consuming. The package is based on tidyr, dplyr,srvyr packages. Most common functions are- 
+analyticaid is designed for making the data analysis easy and less time consuming. The package is based on tidyr, dplyr,srvyr packages. Most common functions are- 
 
 ## Installation
 
@@ -37,7 +37,7 @@ You can install the development version from [GitHub](https://github.com/) with:
 
 ``` {r, eval=FALSE}
 # install.packages("devtools")
-devtools::install_github("mhkhan27/illuminate")
+devtools::install_github("mhkhan27/analyticaid")
 
 ```
 
@@ -70,7 +70,7 @@ devtools::install_github("mhkhan27/illuminate")
 
 ##### Step 1:: Call libraries and read data
 ``` {r, eval=FALSE}
-library(illuminate)
+library(analyticaid)
 library(tidyverse)
 
 cleaning_log <- read.csv("data/01_implementing_cleaning_log/cleaning_log.csv")
@@ -122,7 +122,7 @@ clean_data <- implement_cleaning_log(df = data,
 ##### Step 0:: Call libraries
 
 ``` {r, eval=FALSE}
-library(illuminate)
+library(analyticaid)
 library(tidyverse)
 library(purrr)
 library(readxl)
