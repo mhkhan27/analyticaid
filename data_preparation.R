@@ -1,7 +1,5 @@
-# load("data/data.rda")
+#  load("data/analysis_by_group.rda")
 #
-# list2env(data,.GlobalEnv)
+# save(survey,file = paste0("data/","survey",".rda"),compress='xz')
 #
-# list(ls())
 #
-# save(analysis_by_group,file = paste0("data/","analysis_by_group",".rda"))
