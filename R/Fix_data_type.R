@@ -8,10 +8,11 @@
 
 find_qualitative_cols_from_kobo <-function(df,kobo_survey_sheet,additional_cols_to_remove =NULL){
 
-  text_cols <- (kobo_survey_sheet |> filter(type == "text"))$name
-  date_cols <- (kobo_survey_sheet |> filter(type == "date"))$name
-  gps_cols <- (kobo_survey_sheet |> filter(type == "geopoint"))$name
-  note_cols <- (kobo_survey_sheet |> filter(type == "note"))$name
+  kobo_survey_sheet <- kobo_survey_sheet
+  text_cols <- (kobo_survey_sheet |> filter(kobo_survey_sheet$type == "text"))$name
+  date_cols <- (kobo_survey_sheet |> filter(kobo_survey_sheet$type == "date"))$name
+  gps_cols <- (kobo_survey_sheet |> filter(kobo_survey_sheet$type == "geopoint"))$name
+  note_cols <- (kobo_survey_sheet |> filter(kobo_survey_sheet$type == "note"))$name
 
   starts_with_x <- df |> select(starts_with("X_")) |> names()
 
@@ -98,87 +99,5 @@ fix_data_type <- function(df,remove_all_NA_col=T,
 
   return(df)
 }
-
-
-
-############################### data documentation #######################
-
-
-
-
-#' Band membership
-#'
-#' These data sets describe band members of the Beatles and Rolling Stones. They
-#' are toy data sets that can be displayed in their entirety on a slide (e.g. to
-#' demonstrate a join).
-#'
-#'
-#' @format Each is a tibble with two variables and three observations
-#' @examples
-#' analysis_by_group
-#' raw_data
-#' cleaning_log
-#' clean_data
-#' survey
-#' choices
-#' overall_analysis
-
-
-#' @name analysis_by_group
-#' @title a
-#' @rdname analysis_by_group
-#' @format NULL
-"analysis_by_group"
-
-#' @title a
-#' @name raw_data
-#' @rdname raw_data
-#' @format NULL
-"raw_data"
-
-
-
-#' @title a
-#' @name cleaning_log
-#' @rdname cleaning_log
-#' @format NULL
-"cleaning_log"
-
-
-
-
-#' @title a
-#' @name clean_data
-#' @rdname clean_data
-#' @format NULL
-"clean_data"
-
-
-
-
-#' @title a
-#' @name survey
-#' @rdname survey
-#' @format NULL
-"survey"
-
-
-
-#' @title a
-#' @name choices
-#' @rdname choices
-#' @format NULL
-"choices"
-
-
-
-
-#' @title a
-#' @name overall_analysis
-#' @rdname overall_analysis
-#' @format NULL
-"overall_analysis"
-
-
 
 
