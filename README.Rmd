@@ -48,6 +48,16 @@ devtools::install_github("mhkhan27/analyticaid")
 ----
 
 * `read_sheets()` read all sheet in an excel file and makes sure that data stores in appropriate data type. 
+
+``` {r, eval=FALSE}
+library(analyticaid)
+
+read_sheets("[path].xlsx",output_as_list = F) # to have all the tabs in your r environment as individual dataframe. 
+data <- read_sheets("[path].xlsx",output_as_list = T) # to have all the tabs in a list 
+data <- read_sheets("[path].xlsx",output_as_list = T,sheets = "Tab 1","Tab 2") # to have ONLY `Tab 1` and `Tab 2` in a list 
+
+```
+
 * `write_formatted_excel()` write formatted excel.
 
 ***2. Data cleaning***
