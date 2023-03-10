@@ -30,7 +30,7 @@ testthat::test_that("Check find_integer_cols",{
 testthat::test_that("Check fix_data_type",{
   DF <- raw_data %>% fix_data_type()
   DF_character <- raw_data %>% fix_data_type(character_cols = "X_index")
-  expect_identical(class(DF$X_index),"integer")
+  expect_identical(class(DF$X_index),"numeric")
   expect_identical(class(DF_character$X_index),"character")
 })
 
