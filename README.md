@@ -7,7 +7,6 @@
 [![codecov](https://codecov.io/gh/mhkhan27/analyticaid/branch/master/graph/badge.svg?token=99gpTJv9Rz)](https://codecov.io/gh/mhkhan27/analyticaid)
 [![Generic
 badge](https://img.shields.io/badge/STATUS-UNDER%20DEVELOPMENT-%23007CE0)](https://shields.io/)
-[![Coverage](https://img.shields.io/coveralls/github/badges/shields)](https://shields.io/)
 
 <!-- badges: end -->
 
