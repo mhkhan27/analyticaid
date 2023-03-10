@@ -22,11 +22,14 @@ read_sheets<- function(dataset_path,
                            output_as_list =F){
 
   sheet_name <- getSheetNames(dataset_path)
+
+  if(all(sheets!="all")) {
+
   sheets_notice <- sheets[!sheets %in% sheet_name]
 
   assertthat::assert_that(all(sheets %in% sheet_name),
                           msg= paste0("Error:", paste0(sheets_notice,collapse = ","), " was not found in the dataset"))
-
+  }
 
   if(all(sheets=="all")){sheet_name <- sheet_name}
 
