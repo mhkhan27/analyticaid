@@ -5,6 +5,9 @@
 
 [![R-CMD-check](https://github.com/mhkhan27/analyticaid/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mhkhan27/analyticaid/actions/workflows/R-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/mhkhan27/analyticaid/branch/master/graph/badge.svg?token=99gpTJv9Rz)](https://codecov.io/gh/mhkhan27/analyticaid)
+[![Generic
+badge](https://img.shields.io/badge/STATUS-UNDER%20DEVELOPMENT-%23007CE0)](https://shields.io/)
+[![Coverage](https://img.shields.io/coveralls/github/badges/shields)](https://shields.io/)
 
 <!-- badges: end -->
 
@@ -33,13 +36,8 @@ devtools::install_github("mhkhan27/analyticaid")
 library(analyticaid)
 
 read_sheets("[path].xlsx",output_as_list = F) # to have all the tabs in your r environment as individual dataframe. 
-
 data <- read_sheets("[path].xlsx",output_as_list = T) # to have all the tabs in a list 
-
 data <- read_sheets("[path].xlsx",output_as_list = T,sheets = "Tab 1","Tab 2") # to have ONLY `Tab 1` and `Tab 2` in a list 
-
-
-data <- read.csv("data/01_implementing_cleaning_log/data.csv")
 ```
 
 - `write_formatted_excel()` write formatted excel.
