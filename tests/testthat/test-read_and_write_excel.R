@@ -1,5 +1,4 @@
 library(dplyr)
-library(readxl)
 library(openxlsx)
 # test for read and write -------------------------------------------------
 
@@ -17,6 +16,10 @@ testthat::test_that("check_read_sheets",{
 
   data <- read_sheets(test_path("testdata","sample_data_for_read_sheet.xlsx"),output_as_list = T)
   expect_length(data,3)
+
+
+  expect_error(read_sheets(test_path("testdata","sample_data_for_read_sheet.xlsx"),sheets = c("surv","choices"))
+)
 
 })
 ## test for read excel with sheet  NOT all and data_type_fix is false and remove all NA F
