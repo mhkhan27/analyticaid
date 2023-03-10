@@ -14,19 +14,14 @@
 #'
 
 read_sheets<- function(dataset_path,
-                           remove_all_NA_col = T,
-                           data_type_fix =T,
-                           na_strings = c("","NA","N/A"," "),
-                           sheets = "all",
-                           character_cols=NULL,
-                           output_as_list =F){
+                       remove_all_NA_col = T,
+                       data_type_fix =T,
+                       na_strings = c("","NA","N/A"," "),
+                       sheets = "all",
+                       character_cols=NULL,
+                       output_as_list =F){
 
-  sheet_name <- getSheetNames(dataset_path)
-  sheets_notice <- sheets[!sheets %in% sheet_name]
-
-  assertthat::assert_that(all(sheets %in% sheet_name),
-                          msg= paste0("Error:", paste0(sheets_notice,collapse = ","), " was not found in the dataset"))
-
+  sheet_name <- excel_sheets(dataset_path)
 
   if(all(sheets=="all")){sheet_name <- sheet_name}
 
@@ -35,7 +30,7 @@ read_sheets<- function(dataset_path,
 
   df_all <- list()
   for (i in sheet_name) {
-    assign(i,read.xlsx(dataset_path,sheet = i,na.strings = na_strings))
+    assign(i,read_xlsx(dataset_path,sheet = i,guess_max = 21474836))
     df <- get(i)
 
 
@@ -49,12 +44,9 @@ read_sheets<- function(dataset_path,
 
     if(data_type_fix == T){
 
-      df <-  fix_data_type(df,
-                           remove_all_NA_col = remove_all_NA_col,
-                           na.string = na_strings,
-                           character_cols)
+      df <-  fix_data_type(df,remove_all_NA_col = remove_all_NA_col,na.string = na_strings,character_cols)
 
-        }
+    }
 
 
     ## remove all NA
@@ -95,13 +87,13 @@ read_sheets<- function(dataset_path,
 
 
 write_formatted_excel <- function(write_list,output_path,
-                        cols_for_color = NULL,
-                        header_front_size = 12,
-                        header_front_color= "#FFFFFF",
-                        header_fill_color = "#ee5859",
-                        header_front = "Arial Narrow",
-                        body_front =  "Arial Narrow",
-                        body_front_size = 11){
+                                  cols_for_color = NULL,
+                                  header_front_size = 12,
+                                  header_front_color= "#FFFFFF",
+                                  header_fill_color = "#ee5859",
+                                  header_front = "Arial Narrow",
+                                  body_front =  "Arial Narrow",
+                                  body_front_size = 11){
 
 
   headerStyle <- createStyle(fontSize = header_front_size,
@@ -177,4 +169,3 @@ write_formatted_excel <- function(write_list,output_path,
   saveWorkbook(wb, file = output_path, overwrite = TRUE)
 
 }
-
