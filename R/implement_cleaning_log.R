@@ -119,10 +119,10 @@ check_cleaning_log <- function(df,
 
 
   assert_that( cl_change_type_col %in% names(cl),
-                          msg="Error: change type column not found in cleaning log")
+               msg="Error: change type column not found in cleaning log")
 
   assert_that(all(change_type_for_change_response %in% cl[[cl_change_type_col]]),
-                          msg="Error: Value in change_type_for_change_response not found")
+              msg="Error: Value in change_type_for_change_response not found")
 
   cl_change_col_prob_df<-cl %>%
     filter(!!sym(cl_change_type_col) %in% change_type_for_change_response) %>%
