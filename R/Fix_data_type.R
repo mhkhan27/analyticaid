@@ -75,6 +75,7 @@ fix_data_type <- function(df,remove_all_NA_col=T,
 
   ## fix_integer
   int_cols_name <- find_integer_cols(df)
+  df <- df |> mutate_at(int_cols_name,as.numeric)
   df <- df |> mutate_at(int_cols_name,as.integer)
 
 
