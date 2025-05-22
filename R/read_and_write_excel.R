@@ -11,7 +11,10 @@
 #' @param output_as_list TRUE to have a list with all the excel tabs. FALSE will be making a separate data frame for each tab.
 #' @return All of the sheet as individual dataframe
 #' @export
-#'
+#' @importFrom openxlsx getSheetNames read.xlsx
+#' @importFrom stringr str_replace_all
+#' @importFrom dplyr select rename_at select_if
+
 
 read_sheets<- function(dataset_path,
                            remove_all_NA_col = T,
@@ -78,22 +81,22 @@ read_sheets<- function(dataset_path,
 
 
 #'
-#' This function provide excel file as REACH format
+#' This function provide formatted excel file
 #'
 #' @param write_list a list file (can be compile with single or multiple dataframe)
 #' @param output_path Path for output file
 #' @param header_front_color hexcode for header front color (default is white)
 #' @param header_front_size Header front size (default is 12)
-
 #' @param header_fill_color hexcode for header fill color (default is Red)
 #' @param header_front Define the name of the front for header (default is Arial Narrow)
 #' @param body_front Define the name of the front for body (default is Arial Narrow)
 #' @param body_front_size Body front size (default is 11)
-
 #' @param cols_for_color Column name in the dataframe which should be use for colorizing the cell. The default is null.
 #' @return Nicely formatted excel file
 #' @export
-#'
+#' @importFrom openxlsx createStyle createWorkbook addWorksheet writeData addFilter freezePane addStyle setRowHeights setColWidths saveWorkbook
+#' @importFrom randomcoloR randomColor
+
 
 
 
@@ -101,9 +104,9 @@ write_formatted_excel <- function(write_list,output_path,
                         cols_for_color = NULL,
                         header_front_size = 12,
                         header_front_color= "#FFFFFF",
-                        header_fill_color = "#ee5859",
-                        header_front = "Arial Narrow",
-                        body_front =  "Arial Narrow",
+                        header_fill_color = "darkblue",
+                        header_front = "Aptos",
+                        body_front =  "Aptos",
                         body_front_size = 11){
 
 
