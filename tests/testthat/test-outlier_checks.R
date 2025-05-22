@@ -1,5 +1,6 @@
 library(dplyr)
 library(tidyr)
+library(testthat)
 test_that("Outliers check", {
 
   ### test cols to add

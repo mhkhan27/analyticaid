@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_and_write_excel.R
 \name{write_formatted_excel}
 \alias{write_formatted_excel}
-\title{This function provide excel file as REACH format}
+\title{This function provide formatted excel file}
 \usage{
 write_formatted_excel(
   write_list,
@@ -10,9 +10,9 @@ write_formatted_excel(
   cols_for_color = NULL,
   header_front_size = 12,
   header_front_color = "#FFFFFF",
-  header_fill_color = "#ee5859",
-  header_front = "Arial Narrow",
-  body_front = "Arial Narrow",
+  header_fill_color = "darkblue",
+  header_front = "Aptos",
+  body_front = "Aptos",
   body_front_size = 11
 )
 }
@@ -39,5 +39,5 @@ write_formatted_excel(
 Nicely formatted excel file
 }
 \description{
-This function provide excel file as REACH format
+This function provide formatted excel file
 }
