@@ -4,23 +4,32 @@
 \alias{survey_collapse_categorical_long}
 \title{Collapse categorical data into tidy long format}
 \usage{
-survey_collapse_categorical_long(df, x, disag = NULL, na_val = NA_character_)
+survey_collapse_categorical_long(
+  df,
+  x,
+  reporting_col = c("both", "weighted", "unweighted"),
+  disag = NULL,
+  na_val = NA_character_
+)
 }
 \arguments{
-\item{df}{a survey or preferably srvyr object}
+\item{df}{A \code{tbl_svy} object created with \code{srvyr::as_survey()} (or compatible).}
 
-\item{x}{columns to collapse}
+\item{x}{Character scalar. The name of the variable to collapse.
+Can be logical (treated as TRUE/FALSE) or numeric (treated as continuous).}
 
-\item{disag}{the columns to collapse/ subset by(analagous to [[dplyr::group_by]] to [[dplyr::summarise]]) flow}
+\item{reporting_col}{One of "weighted", "both", or "unweighted".}
 
-\item{na_val}{if you want NA replaced by value. By default NA values will be removed prior to aggregation. It is recommended
-that you do not adjust this value and deal with na values as a separate step}
+\item{disag}{Optional character vector of column names to disaggregate by
+(analogous to \code{dplyr::group_by()} before collapsing).}
+
+\item{na_val}{Replacement value for \code{NA}s before aggregation.
+If \code{NA_real_} (default), rows with missing \code{x} are removed.
+If a number is provided, missing \code{x} are replaced with that value.}
 }
 \value{
-a long format data frame containing the collapsed data.
+A long-format data frame with proportions and counts
 }
 \description{
-`survey_collapse_categorical_long()` uses the srvyr [srvyr::survey_mean] & survey package [survey::svyciprop]   methods
-to collapse/or aggregate cateogrical data. This function can be used on its own, but was build mainly to for its use in [butteR::survey_collapse]
-which is meant to help batch analyze data
+Aggregates categorical survey data using \code{\link[srvyr:survey_mean]{srvyr::survey_mean()}}.
 }

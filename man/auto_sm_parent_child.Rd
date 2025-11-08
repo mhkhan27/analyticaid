@@ -17,6 +17,6 @@ a data frame containing the the child select multiple columns alongside there pa
 a log with all changes recorded.
 }
 \description{
-`auto_sm_parent_children` is mean to detect select multiple parent columns & children columns in a way that does
+\code{auto_sm_parent_children} is mean to detect select multiple parent columns & children columns in a way that does
 not rely on the XLSForm as the input
 }
