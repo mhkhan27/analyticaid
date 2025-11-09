@@ -16,6 +16,6 @@ If using read_csv to read in data the separator will most likely be '/' where as
 a list of select multiple parent columns in data set.
 }
 \description{
-`auto_detect_sm_parents` is mean to detect select multiple parent columns in a way that does
+\code{auto_detect_sm_parents} is mean to detect select multiple parent columns in a way that does
 not rely on the XLSForm as the input
 }

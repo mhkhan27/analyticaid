@@ -6,45 +6,51 @@
 \usage{
 survey_analysis(
   df,
-  weights = F,
+  weights = FALSE,
   weight_column = NULL,
+  reporting_col = "both",
   strata,
   vars_to_analyze = NULL,
   disag = NULL,
-  na_val,
+  na_val = NA,
   sm_sep = "/",
-  question_lable = F,
+  question_lable = FALSE,
   kobo_path = NULL
 )
 }
 \arguments{
-\item{df}{a survey or preferably srvyr object}
+\item{df}{A \code{tbl_svy} object created with \code{srvyr::as_survey()} (or compatible).}
 
-\item{weights}{TRUE if you want to consider weights}
+\item{weights}{Logical; whether to apply survey weights}
 
-\item{weight_column}{column containing weights}
+\item{weight_column}{Column name for weights}
 
-\item{strata}{Strata name}
+\item{reporting_col}{One of "weighted", "both", or "unweighted".}
 
-\item{vars_to_analyze}{columns to collapse}
+\item{strata}{Strata variable}
 
-\item{disag}{the columns to collapse/ subset by(analagous to [[dplyr::group_by]] to [[dplyr::summarise]]) flow}
+\item{vars_to_analyze}{Variables to collapse}
 
-\item{na_val}{if you want NA replaced by value. By default NA values will be removed prior to aggregation. It is recommended
-that you do not adjust this value and deal with na values as a separate step}
+\item{disag}{Optional character vector of column names to disaggregate by
+(analogous to \code{dplyr::group_by()} before collapsing).}
 
-\item{sm_sep}{select multiple parent child separator. This is specific for XLSForm data (default = /).}
+\item{na_val}{Replacement value for \code{NA}s before aggregation.
+If \code{NA_real_} (default), rows with missing \code{x} are removed.
+If a number is provided, missing \code{x} are replaced with that value.}
 
-\item{question_lable}{A logical variable. Select TRUE if label from kobo is necessary in the analysis.
-If using read_csv to read in data the separator will most likely be '/' where as if using read.csv it will likely be '.'}
+\item{sm_sep}{Single-character separator used by select-multiple columns
+(default \code{"/"}). The function derives a \code{variable} column by
+removing the child suffix after the last occurrence of this separator.}
 
-\item{kobo_path}{kobo tool path}
+\item{question_lable}{Logical; if TRUE, append Kobo labels}
+
+\item{kobo_path}{Path to Kobo XLSForm}
 }
 \value{
-a long format data frame containing the collapsed data.
+A tidy long data frame of survey results
 }
 \description{
-`survey_analysis` uses the srvyr [srvyr::survey_mean] & survey package [survey::svymean]   methods
-to collapse/or aggregate survey data. This function uses `survey_collapse_categorical_long` and `survey_collapse_binary_long`
-to perform the batch analysis. This function is extracted from butteR
+Uses \code{\link[srvyr:survey_mean]{srvyr::survey_mean()}} to collapse or aggregate survey data
+by calling \code{\link[=survey_collapse_categorical_long]{survey_collapse_categorical_long()}} and \code{\link[=survey_collapse_numeric_long]{survey_collapse_numeric_long()}}.
+Extracted and adapted from the butteR package.
 }
