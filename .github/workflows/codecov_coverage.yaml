@@ -1,9 +1,57 @@
-- name: Test coverage (upload via covr)
-  run: |
-    covr::codecov(
-      quiet = FALSE,
-      token = Sys.getenv("CODECOV_TOKEN")
-    )
-  shell: Rscript {0}
-  env:
-    CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# For help: https://github.com/r-lib/actions#where-to-find-help
+
+name: test-coverage
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test-coverage:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Install dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::covr
+          needs: coverage
+
+      - name: Run test coverage and upload to Codecov
+        run: |
+          covr::codecov(
+            quiet = FALSE,
+            clean = FALSE,
+            token = Sys.getenv("CODECOV_TOKEN")
+          )
+        shell: Rscript {0}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Show testthat output
+        if: always()
+        run: |
+          echo "---- testthat output ----"
+          find . -name 'testthat.Rout*' -exec cat '{}' \; || true
+        shell: bash
+
+      - name: Upload test results (if failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: testthat-failures
+          path: tests/testthat
