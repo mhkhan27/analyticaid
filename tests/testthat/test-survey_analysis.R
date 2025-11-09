@@ -708,9 +708,12 @@ testthat::test_that("check survey_analysis", {
     filter(!strata == "al_senaa_al_shamaliya")
 
 
-  df_svy2 <- as_survey(new_analy,strata ="strata",weight = "weight")
+  # df_svy2 <- as_survey(new_analy,strata ="strata",weight = "weight")
+  #
+  # analysis_analysistools_rt <- (analysistools::create_analysis(design = df_svy2))$results_table
 
-  analysis_analysistools_rt <- (analysistools::create_analysis(design = df_svy2))$results_table
+  # usethis::use_data(analysis_analysistools_rt,overwrite = T)
+
 
   analysis_analysistools_stat <- analysis_analysistools_rt |>
     filter(analysis_type !="median",!analysis_var %in% c("strata","weight"),
