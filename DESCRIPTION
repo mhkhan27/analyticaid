@@ -1,17 +1,37 @@
 Type: Package
 Package: analyticaid
-Title: Data cleaning and analysis
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: Md. Mehedi Hasan Khan <plannermehedi@gmail.com>
-Description: More about what it does (maybe more than one line) Use four
-    spaces when indenting paragraphs within the Description.
+Title: Automated Data Cleaning and Analysis for ODK and Kobo Datasets
+Version: 0.2.0
+Authors@R: 
+    person("Md Mehedi Hasan", "Khan", 
+           email = "plannermehedi@gmail.com", 
+           role = c("aut", "cre"))
+Description: analyticaid automates data cleaning, validation, and analysis 
+    workflows for survey data collected via ODK and Kobo. It provides streamlined 
+    functions for audit log reading, duration analysis, variable collapsing, and 
+    automated checks, helping users process and analyse field data quickly and 
+    consistently.
 License: MIT + file LICENSE
 Encoding: UTF-8
-Imports: stringr,utils,dplyr,openxlsx,assertthat,tidyr,randomcoloR,srvyr,purrr,glue,rlang,tibble,sf
+Imports: 
+    stringr,
+    utils,
+    dplyr,
+    openxlsx,
+    assertthat,
+    tidyr,
+    randomcoloR,
+    srvyr,
+    purrr,
+    glue,
+    rlang,
+    tibble,
+    sf
 LazyData: true
+URL: https://github.com/mhkhan27/analyticaid
+BugReports: https://github.com/mhkhan27/analyticaid/issues
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-Roxygen: list(markdown = TRUE)
