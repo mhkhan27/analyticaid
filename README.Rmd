@@ -20,7 +20,7 @@ library(dplyr)
 library(sf)
 library(tidyr)
 ```
-# analyticaid <img src='man/figures/analyticaid.png' align="right" height="80.5" />
+# analyticaid <img src='man/figures/analyticaid.png' align="right" height="40.5" />
 
 
 <!-- badges: start -->
