@@ -66,8 +66,7 @@ is the raw count of TRUE (ignoring weights).
 \section{Notes}{
 
 This function expects \code{df} to be a survey design (\code{tbl_svy}) built with
-the correct weights/strata/PSU. The helper \code{mutate_key_pair()} must be available
-in your package namespace if you want the subset name/value columns added.
+the correct weights/strata/PSU.
 }
 
 \examples{

@@ -5,9 +5,12 @@ library(tidyr)
 library(stringr)
 library(openxlsx)
 library(srvyr)
-library(analyticaid)
+# library(analysistools) ## this is from
 # source("R/survey_analysis.R")
 
+
+
+testthat::test_that("check na_response rate", {
 
 ### get na respose rate
 
@@ -30,7 +33,7 @@ testthat::expect_equal(
   function_get_na,actual
 )
 
-
+})
 # survey design --------------------------------------------------
 
 
@@ -53,9 +56,10 @@ dfsvy_w <- as_survey(df_f |> filter(strata !="al_senaa_al_shamaliya"),weight = "
 
 
 # binary ------------------------------------------------------------------
+testthat::test_that("check survey_collapse_numeric_long", {
 
 ## check  binary variable + unweighted + disagg
-actual <- survey_collapse_numeric_long(df = dfsvy,reporting_col = "unweighted",
+actual <- survey_collapse_numeric_long(df = dfsvy,reporting_col = "both",
                                       x = "how_engaged_by_office.face_to_face_home",
                                       disag = "gender_hoh")
 expected <- structure(list(variable = c("how_engaged_by_office.face_to_face_home",
@@ -271,7 +275,7 @@ testthat::expect_equal(
 ## check  numeric variable + weighted + multi-disagg
 actual <- survey_collapse_numeric_long(df = dfsvy_w, x = "age_respondent_r",disag = c("gender_hoh","strata"))[c(12,8),]
 
-exopected <- structure(list(variable = c("age_respondent_r", "age_respondent_r"
+expected <- structure(list(variable = c("age_respondent_r", "age_respondent_r"
 ), variable_val = c("age_respondent_r", "age_respondent_r"),
 subset_1_name = c("gender_hoh", "gender_hoh"),
 subset_2_name = c("strata",  "strata"),
@@ -291,7 +295,16 @@ row.names = c(NA, -2L), class = c("tbl_df", "tbl", "data.frame"))
 testthat::expect_equal(
   expected,actual
 )
+
+})
+
+
+
 #### catagorical #########
+
+
+testthat::test_that("check survey_collapse_categorical_long", {
+
 
 ##catagorical+unweighted+no_disa
 actual <- survey_collapse_categorical_long(df = dfsvy,
@@ -389,26 +402,85 @@ testthat::expect_equal(
   expected,actual
 )
 
-
-# survey analysis ---------------------------------------------------------
-
-cols_to_ana <-(dfsvy$variables |> names())[130:200]
-
-d <-(df_f |>  filter(strata !="al_senaa_al_shamaliya"))[130:200]
+})
 
 
-analysis <- survey_analysis(df = df_f |> filter(strata !="al_senaa_al_shamaliya"),
+
+testthat::test_that("check survey_analysis", {
+
+  # survey analysis ---------------------------------------------------------
+
+# test with analysistools --------------------------------------------------------
+
+cols <- c("access_water_enough_why_not", "access_water_enough_why_not.not_enough_hours",
+          "access_water_enough_why_not.amount_not_enough", "access_water_enough_why_not.inconvenient_hours",
+          "access_water_enough_why_not.supply_inconsistent", "access_water_enough_why_not.too_expensive",
+          "access_water_enough_why_not.quality_poor", "access_water_enough_why_not.water_pressure",
+          "access_water_enough_why_not.sources_closed", "access_water_enough_why_not.not_available_shops",
+          "access_water_enough_why_not.tank_capacity", "access_water_enough_why_not.points_difficult_reach",
+          "access_water_enough_why_not.some_groups_no_access", "access_water_enough_why_not.other",
+          "access_water_enough_why_not.dont_know", "access_water_enough_why_not.prefer_not_answer",
+          "air_coolers_hours","pump_days", "pump_hours", "pump_connection_piped_sys")
+
+
+new_analy <- df_f |>
+  select(all_of(cols),"strata","weight") |>
+  fix_data_type(remove_all_NA_col = T) |>
+  filter(!strata == "al_senaa_al_shamaliya")
+
+
+df_svy2 <- as_survey(new_analy,strata ="strata",weight = "weight")
+
+analysis_analysistools_rt <- (analysistools::create_analysis(design = df_svy2))$results_table
+
+analysis_analysistools_stat <- analysis_analysistools_rt |>
+  filter(analysis_type !="median",!analysis_var %in% c("strata","weight"),
+         !is.na(stat),!is.nan(stat) ) |>
+  select(main_variable= analysis_var,
+         choice= analysis_var_value,
+         stat,
+         count_weighted =n_w,
+         count_by_subset_weighted =n_w_total ,
+         count_unweighted=n,
+         count_by_question_unweighted= n_total,
+         )
+
+
+
+analysis_aid <- survey_analysis(df = new_analy,
                             weights = T,
-                            reporting_col = "oth",
+                            reporting_col = "both",
                             weight_column = "weight",
                             strata = "strata",
-                            vars_to_analyze =cols_to_ana )
+                            vars_to_analyze =cols )
 
-analysis_by_hoh_gender <- survey_analysis(df = df_f |> filter(strata !="al_senaa_al_shamaliya"),
-                            weights = F,disag = "gender_hoh",
-                            reporting_col = "weigted",
-                            weight_column = "weight",
-                            strata = "strata",
-                            vars_to_analyze =cols_to_ana )
+analysis_aid_stat <- analysis_aid |> select(all_of(names(analysis_analysistools_stat)))
+
+
+testthat::expect_equal(analysis_analysistools_stat,analysis_aid_stat)
+
+
+### median
+analysis_aid_median <- analysis_aid |> filter(!is.na(median_weighted)) |>
+  select(main_variable,median_weighted,median_unweighted) |> arrange(main_variable) |>
+  select(main_variable,stat= median_weighted)
+
+analysis_analysistools_median <- analysis_analysistools_rt |>
+  filter(analysis_type == "median",analysis_var!="weight")  |>
+  arrange(analysis_var) |>
+  select(main_variable = analysis_var, stat)
+
+
+testthat::expect_equal(analysis_aid_median,analysis_analysistools_median)
+
+
+})
+
+
+
+
+
+
+
 
 

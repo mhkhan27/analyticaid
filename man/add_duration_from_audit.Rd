@@ -2,7 +2,7 @@
 % Please edit documentation in R/duration_claculation.R
 \name{add_duration_from_audit}
 \alias{add_duration_from_audit}
-\title{Adds duration from the audit file}
+\title{Add audit-derived durations to a dataset}
 \usage{
 add_duration_from_audit(
   dataset,
@@ -15,55 +15,78 @@ add_duration_from_audit(
 )
 }
 \arguments{
-\item{dataset}{dataset to add the duration}
+\item{dataset}{A data frame to which the duration columns will be added.}
 
-\item{col_name_prefix}{string character to be used for the prefix of new columns}
+\item{col_name_prefix}{Character scalar used as the prefix for new columns.
+Defaults to \code{"duration_audit"}. The function creates columns with the
+following suffixes when requested:
+\itemize{
+\item \code{"_start_end_ms"}, \code{"_start_end_minutes"} — duration between a specific
+start and end question (milliseconds and minutes).
+\item \code{"_sum_all_ms"}, \code{"_sum_all_minutes"} — total duration obtained by
+summing all question times (milliseconds and minutes).
+}
+If any of these columns already exist, the function stops with an error.}
 
-\item{uuid_column}{uuid column in the dataset. Default is uuid.}
+\item{uuid_column}{Character scalar; the UUID column name in \code{dataset}.
+Default is \code{"uuid"}.}
 
-\item{audit_list}{list of dataframe that are the audit file with the uuid of
-each interview as name of the dataframe.}
+\item{audit_list}{A named list of audit data frames, one per interview,
+where each element name is the interview UUID. Each audit data frame must
+contain at least the columns \code{event}, \code{node}, \code{start}, and \code{end}.}
 
-\item{start_question}{character vector use for the starting question (optional)}
+\item{start_question}{Optional character scalar specifying the trailing node label
+of the starting question used for the start–end duration.}
 
-\item{end_question}{character vector use for the ending question (optional)}
+\item{end_question}{Optional character scalar specifying the trailing node label
+of the ending question used for the start–end duration.}
 
-\item{sum_all}{TRUE or FALSE if to add the time with sum all duration}
+\item{sum_all}{Logical; if \code{TRUE} (default), also compute and add the total
+duration obtained by summing all question times.}
 }
 \value{
-return the dataset with durations column added
+The input \code{dataset} with additional duration columns as requested.
 }
 \description{
-Wrapper around create_duration_from_audit_with_start_end and
-create_duration_from_audit_sum_all to add the duration to the dataset.
+Wrapper around \code{\link{create_duration_from_audit_with_start_end}} and
+\code{\link{create_duration_from_audit_sum_all}} that computes durations from
+per-interview audit logs and left-joins them to a dataset by UUID.
+}
+\details{
+When both \code{start_question} and \code{end_question} are provided, the function
+computes the duration between the earliest \code{start} timestamp of the start
+question and the latest \code{end} timestamp of the end question using
+\code{\link{create_duration_from_audit_with_start_end}}. Independently, when
+\code{sum_all = TRUE}, it computes the total question time using
+\code{\link{create_duration_from_audit_sum_all}}. Results are then joined to
+\code{dataset} by matching \code{uuid_column} to the names of \code{audit_list}.
+
+The function validates inputs and will stop when:
+\itemize{
+\item Only one of \code{start_question}/\code{end_question} is provided.
+\item \code{uuid_column} is missing from \code{dataset}.
+\item None of the \code{audit_list} names are found in \code{dataset[[uuid_column]]}.
+\item Required audit columns are missing.
+}
 }
 \examples{
+\dontrun{
 list_audit <- list(
   uuid1 = data.frame(
     event = c("form start", rep("question", 5)),
-    node = c("", paste0("/xx/question", 1:5)),
-    start = c(
-      1661415887295, 1661415887301,
-      1661415890819, 1661415892297,
-      1661415893529, 1661415894720
-    ),
-    end = c(
-      NA, 1661415890790, 1661415892273,
-      1661415893506, 1661415894703,
-      1661415896452
-    )
+    node  = c("", paste0("/xx/question", 1:5)),
+    start = c(1661415887295, 1661415887301, 1661415890819,
+              1661415892297, 1661415893529, 1661415894720),
+    end   = c(NA, 1661415890790, 1661415892273,
+              1661415893506, 1661415894703, 1661415896452)
   ),
   uuid2 = data.frame(
     event = c("form start", rep("question", 5)),
-    node = c("", paste0("/xx/question", 1:5)),
-    start = c(
-      1661415887295, 1661415887301, 1661415890819,
-      1661415892297, 1661415893529, 1661415894720
-    ),
-    end = c(
-      NA, 1661415890790, 1661415892273,
-      1661415893506, 1661415894703, 1661415896452
-    )
+    node  = c("", paste0("/xx/question", 1:5)),
+    start = c(1661415887295, 1661415887301, 1661415890819,
+              1661415892297, 1661415893529, 1661415894720),
+    end   = c(NA, 1661415890790, 1661415892273,
+              1661415893506, 1661415894703, 1661415896452)
   )
 )
 some_dataset <- data.frame(
@@ -74,17 +97,26 @@ some_dataset <- data.frame(
   question4 = c("a", "b"),
   question5 = c("a", "b")
 )
+# Add sum-all durations
 add_duration_from_audit(some_dataset, uuid_column = "X_uuid", audit_list = list_audit)
-add_duration_from_audit(some_dataset,
-  uuid_column = "X_uuid", audit_list = list_audit,
-  start_question = "question1",
-  end_question = "question3",
+
+# Add start–end duration only
+add_duration_from_audit(
+  some_dataset, uuid_column = "X_uuid", audit_list = list_audit,
+  start_question = "question1", end_question = "question3",
   sum_all = FALSE
 )
-add_duration_from_audit(some_dataset,
-  uuid_column = "X_uuid", audit_list = list_audit,
-  start_question = "question1",
-  end_question = "question3",
+
+# Add both start–end and sum-all durations
+add_duration_from_audit(
+  some_dataset, uuid_column = "X_uuid", audit_list = list_audit,
+  start_question = "question1", end_question = "question3",
   sum_all = TRUE
 )
+}
+
+}
+\seealso{
+\code{\link{create_duration_from_audit_with_start_end}},
+\code{\link{create_duration_from_audit_sum_all}}
 }

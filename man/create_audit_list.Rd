@@ -2,26 +2,53 @@
 % Please edit documentation in R/duration_claculation.R
 \name{create_audit_list}
 \alias{create_audit_list}
-\title{Read all audit files from a zip}
+\title{Read audit CSVs from a ZIP into a named list}
 \usage{
 create_audit_list(audit_zip_path, dataset = NULL, uuid_column = "uuid")
 }
 \arguments{
-\item{audit_zip_path}{location to .zip file. It must contain .zip}
+\item{audit_zip_path}{Character. Path to a \code{.zip} file containing one
+or more audit CSVs located under folders like \verb{<uuid>/audit.csv}.}
 
-\item{dataset}{dataset to (optional)}
+\item{dataset}{Optional data frame used to filter which audits to read.
+When supplied, only UUIDs present in \code{dataset[[uuid_column]]} are
+returned, preserving the order of that vector.}
 
-\item{uuid_column}{uuid column if a dataset is provided. It will only read the uuid
-present in the dataset. It will only be used if a dataset is provided.}
+\item{uuid_column}{Character scalar. Name of the UUID column in \code{dataset}
+(default \code{"uuid"}). Ignored when \code{dataset} is \code{NULL}.}
 }
 \value{
-A list with all the audits file read as they are.
+A named list of data frames (one per UUID). Names are UUIDs.
+When \code{dataset} is provided, the list is ordered to match
+\code{dataset[[uuid_column]]}.
 }
 \description{
-Read all audit files from a zip
+Scans a ZIP archive for files ending with \code{audit.csv} (assumed path
+structure \verb{<uuid>/audit.csv}), reads each audit into a data frame,
+and returns a list named by the corresponding UUID. If a \code{dataset}
+is provided, only audits whose UUIDs appear in \code{dataset[[uuid_column]]}
+are read; requested UUIDs missing from the ZIP are added as empty
+data frames (and a warning is issued).
+}
+\details{
+The function expects a consistent directory layout inside the ZIP where
+each audit resides at the same depth and the UUID is the path segment
+immediately preceding \code{audit.csv}. If this structure is not consistent,
+the function stops with an error. When \code{dataset} is provided:
+\itemize{
+\item Audits present in the ZIP but not in \code{dataset} are ignored (warning).
+\item UUIDs present in \code{dataset} but missing from the ZIP are included
+as empty data frames (warning).
+}
 }
 \examples{
 \dontrun{
-create_audit_list("audit_path.zip")
+# Read all audits found in the zip
+audits <- create_audit_list("audits.zip")
+
+# Read only audits matching UUIDs in a dataset
+df <- data.frame(uuid = c("abc-123", "xyz-789"))
+audits <- create_audit_list("audits.zip", dataset = df, uuid_column = "uuid")
 }
+
 }

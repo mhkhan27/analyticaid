@@ -2,7 +2,7 @@
 % Please edit documentation in R/duration_claculation.R
 \name{check_duration}
 \alias{check_duration}
-\title{Check if duration is outside of a range}
+\title{Check whether durations fall outside a specified range}
 \usage{
 check_duration(
   dataset,
@@ -14,41 +14,53 @@ check_duration(
 )
 }
 \arguments{
-\item{dataset}{a dataset to be check as a dataframe or a list with the
-dataframe stored as "checked_dataset"}
+\item{dataset}{A data frame to check, or a list with the data frame stored
+under the element \code{"checked_dataset"}. If a data frame is provided, it is
+wrapped into a list automatically.}
 
-\item{column_to_check}{string character with the name of the duration column}
+\item{column_to_check}{Character scalar giving the name of the duration column
+to evaluate.}
 
-\item{uuid_column}{uuid column in the dataset. Default is uuid.}
+\item{uuid_column}{Character scalar with the UUID column name in \code{dataset}.
+Defaults to \code{"uuid"}.}
 
-\item{log_name}{character string with name to give to the log}
+\item{log_name}{Character scalar naming the element to store the log in the
+returned list. Defaults to \code{"duration_log"}.}
 
-\item{lower_bound}{lower value of the range (strictly inferior to)}
+\item{lower_bound}{Numeric lower threshold; values \strong{strictly below} this
+are flagged. Default is \code{25}.}
 
-\item{higher_bound}{higher value of the range (strictly superior to)}
+\item{higher_bound}{Numeric upper threshold; values \strong{strictly above} this
+are flagged. Default is \code{90}.}
 }
 \value{
-return a list with the dataset checked stored as checked_dataset and
-a dataframe with the duration log
+A list with:
+\describe{
+\item{checked_dataset}{The input data frame (possibly wrapped from \code{dataset}).}
+\item{\code{log_name}}{A data frame of flagged rows with columns:
+\code{uuid}, \code{old_value} (the offending duration), \code{question}
+(the checked column name), and \code{issue} (a descriptive message).}
+}
 }
 \description{
-Check if value is strictly inferior of the lower threshold or strictly
-superior of the higher threshold.
+Flags records whose duration is strictly less than \code{lower_bound} or strictly
+greater than \code{higher_bound}. Accepts either a data frame or a list that
+contains a data frame under the name \code{"checked_dataset"}. The function
+returns the input (as a list) and adds a log data frame under \code{log_name}
+containing UUIDs and offending values.
 }
 \examples{
+\dontrun{
 testdata <- data.frame(
   uuid = c(letters[1:7]),
-  duration_audit_start_end_ms = c(
-    2475353, 375491, 2654267, 311585, 817270,
-    2789505, 8642007
-  ),
+  duration_audit_start_end_ms = c(2475353, 375491, 2654267, 311585, 817270, 2789505, 8642007),
   duration_audit_start_end_minutes = c(41, 6, 44, 5, 14, 46, 144)
 )
 
-check_duration(testdata,
-  column_to_check = "duration_audit_start_end_minutes"
-)
+# Simple check using default bounds (wrapped automatically)
+check_duration(testdata, column_to_check = "duration_audit_start_end_minutes")
 
+# Provide custom bounds
 check_duration(
   testdata,
   column_to_check = "duration_audit_start_end_ms",
@@ -56,12 +68,15 @@ check_duration(
   higher_bound = 8642000
 )
 
-testdata \%>\%
-  check_duration(column_to_check = "duration_audit_start_end_minutes") \%>\%
+# Chain multiple checks, storing separate logs
+testdata |>
+  check_duration(column_to_check = "duration_audit_start_end_minutes") |>
   check_duration(
     column_to_check = "duration_audit_start_end_ms",
     log_name = "duration_in_ms",
     lower_bound = 375490,
     higher_bound = 8642000
   )
+}
+
 }

@@ -8,7 +8,7 @@ survey_analysis(
   df,
   weights = FALSE,
   weight_column = NULL,
-  reporting_col = c("weighted", "unweighted", "both")[3],
+  reporting_col = "both",
   strata,
   vars_to_analyze = NULL,
   disag = NULL,

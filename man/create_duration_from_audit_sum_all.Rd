@@ -2,33 +2,44 @@
 % Please edit documentation in R/duration_claculation.R
 \name{create_duration_from_audit_sum_all}
 \alias{create_duration_from_audit_sum_all}
-\title{Calculate duration from audit summing all time}
+\title{Calculate total duration from an audit log by summing all question times}
 \usage{
 create_duration_from_audit_sum_all(audit_file)
 }
 \arguments{
-\item{audit_file}{a dataframe with a single audit file,
-it needs start, end, node column}
+\item{audit_file}{A data frame containing one audit log with at least the
+columns \code{node}, \code{start}, and \code{end}. Timestamps are expected in
+milliseconds since the epoch.}
 }
 \value{
-A dataframe with the duration in ms and duration in minutes.
+A data frame with two columns:
+\describe{
+\item{duration_ms}{Total duration across all questions in milliseconds.}
+\item{duration_minutes}{Total duration in minutes, rounded to one decimal.}
+}
 }
 \description{
-Duration is the difference between the sum of all start and the sum of all end.
-It ignores all node that are empty such as form_start, end screen, form save, etc.
+Computes the total time spent across all question nodes in a single
+audit file. The duration is defined as the difference between the
+summed \code{end} and \code{start} timestamps of all question events, ignoring
+empty \code{node} values (such as \emph{form start}, \emph{end screen}, or \emph{form save}).
+}
+\details{
+Rows where \code{node} is empty (\code{""}) are excluded prior to summation.
+The resulting duration reflects the total time actively spent on
+all questions combined, not the overall elapsed form time.
 }
 \examples{
+\dontrun{
 some_audit <- data.frame(
   event = c("form start", rep("question", 5)),
-  node = c("", paste0("/xx/question", 1:5)),
-  start = c(
-    1661415887295, 1661415887301, 1661415890819,
-    1661415892297, 1661415893529, 1661415894720
-  ),
-  end = c(
-    NA, 1661415890790, 1661415892273,
-    1661415893506, 1661415894703, 1661415896452
-  )
+  node  = c("", paste0("/xx/question", 1:5)),
+  start = c(1661415887295, 1661415887301, 1661415890819,
+            1661415892297, 1661415893529, 1661415894720),
+  end   = c(NA, 1661415890790, 1661415892273,
+            1661415893506, 1661415894703, 1661415896452)
 )
 create_duration_from_audit_sum_all(some_audit)
+}
+
 }

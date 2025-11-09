@@ -60,6 +60,7 @@ get_na_response_rates<-function(data){
 #'   (default \code{"/"}). The function derives a \code{variable} column by
 #'   removing the child suffix after the last occurrence of this separator.
 #' @param reporting_col One of "weighted", "both", or "unweighted".
+#'
 #' @details
 #' \itemize{
 #'   \item For \emph{logical} \code{x}: \code{stat} is the weighted proportion of TRUE;
@@ -124,8 +125,12 @@ survey_collapse_numeric_long <- function(df, x, disag = NULL,
                                          na_val = NA_real_,
                                          sm_sep = "/") {
 
-
   reporting_col <- rlang::arg_match(reporting_col)
+
+  old_opt <- getOption("survey.lonely.psu")   # save old setting
+  options(survey.lonely.psu = "adjust")  # set new one
+  on.exit(options(survey.lonely.psu = old_opt), add = TRUE)
+
 
   # Handle NA filtering or replacement
   if (is.na(na_val) & !all(!is.na(df$variables[[x]]))) {
@@ -147,9 +152,9 @@ survey_collapse_numeric_long <- function(df, x, disag = NULL,
     # LOGICAL: counts of TRUE
     res <- df |>
       dplyr::reframe(
-        stat         = srvyr::survey_mean(!!rlang::sym(x), na.rm = TRUE,vartype = "ci"),
-        count_weighted   = srvyr::survey_total(!!rlang::sym(x), na.rm = TRUE,vartype = "ci" ),
-        count_by_subset_weighted   = srvyr::survey_total(as.numeric(!is.na(!!rlang::sym(x))),vartype = "ci"),
+        stat         = suppressWarnings(srvyr::survey_mean(!!rlang::sym(x), na.rm = TRUE,vartype = "ci")),
+        count_weighted   = suppressWarnings(srvyr::survey_total(!!rlang::sym(x), na.rm = TRUE,vartype = "ci" )),
+        count_by_subset_weighted   = suppressWarnings(srvyr::survey_total(as.numeric(!is.na(!!rlang::sym(x))),vartype = "ci")),
         count_unweighted = sum(!!rlang::sym(x) == TRUE, na.rm = TRUE),
         count_by_subset_unweighted = sum(!is.na(!!rlang::sym(x)))
       )
@@ -157,15 +162,15 @@ survey_collapse_numeric_long <- function(df, x, disag = NULL,
     # NUMERIC: counts of non-missing
     res <- df |>
       dplyr::reframe(
-        stat         = srvyr::survey_mean(!!rlang::sym(x), na.rm = TRUE, vartype = "ci"),
+        stat         = suppressWarnings(srvyr::survey_mean(!!rlang::sym(x), na.rm = TRUE, vartype = "ci")),
 
-        count_weighted   = srvyr::survey_total(!is.na(!!rlang::sym(x)), na.rm = TRUE,vartype = "ci"),
-        count_by_subset_weighted  = srvyr::survey_total(as.numeric(!is.na(!!rlang::sym(x))), vartype = "ci"),
+        count_weighted   = suppressWarnings(srvyr::survey_total(!is.na(!!rlang::sym(x)), na.rm = TRUE,vartype = "ci")),
+        count_by_subset_weighted  = suppressWarnings(srvyr::survey_total(as.numeric(!is.na(!!rlang::sym(x))), vartype = "ci")),
 
         count_unweighted = sum(!is.na(!!rlang::sym(x))),
         count_by_subset_unweighted = sum(!is.na(!!rlang::sym(x))),
 
-        median_weighted  = srvyr::survey_median(!!rlang::sym(x), na.rm = TRUE, vartype = "ci"),
+        median_weighted  = suppressWarnings(srvyr::survey_median(!!rlang::sym(x), na.rm = TRUE, vartype = "ci")),
         median_unweighted = median(!!rlang::sym(x),na.rm = T),
       )
   }
@@ -244,6 +249,10 @@ survey_collapse_categorical_long <- function(df, x,
 
   reporting_col <- rlang::arg_match(reporting_col)
 
+  old_opt <- getOption("survey.lonely.psu")   # save old setting
+  options(survey.lonely.psu = "adjust")  # set new one
+  on.exit(options(survey.lonely.psu = old_opt), add = TRUE)
+
 
   # NA handling (same pattern as before)
   if (is.na(na_val)) {
@@ -266,9 +275,9 @@ survey_collapse_categorical_long <- function(df, x,
 
   res <- df |>
     dplyr::reframe(
-      stat         = srvyr::survey_prop(na.rm = TRUE, vartype = "ci"),
+      stat         = suppressWarnings(srvyr::survey_prop(na.rm = TRUE, vartype = "ci")),
 
-      count_weighted   = srvyr::survey_total(!is.na(!!rlang::sym(x)), na.rm = TRUE),
+      count_weighted   = suppressWarnings(srvyr::survey_total(!is.na(!!rlang::sym(x)), na.rm = TRUE)),
       # count_by_subset_weighted  = srvyr::survey_total(as.numeric(!is.na(!!rlang::sym(x)))),
 
       count_unweighted = sum(!is.na(!!rlang::sym(x))),
@@ -370,9 +379,6 @@ survey_analysis <- function(df,
 
 
 
-  # if (! reporting_col %in% c("weighted", "unweighted","both")) {
-  #   stop("reporting_col must be either 'weighted', 'unweighted' or 'both'.")
-  # }
 
   if (weights && reporting_col != "weighted" && reporting_col != "both") {
     stop("reporting_col must be either 'weighted' or 'both' when weights = TRUE")
@@ -390,7 +396,7 @@ survey_analysis <- function(df,
   if (!is.null(weight_column)) vars_to_analyze <- vars_to_analyze[!vars_to_analyze %in% weight_column]
 
   # --- Convert to srvyr object ------------------------------------------------
-  df <- if (weights) srvyr::as_survey(df, strata = strata, weight = weight_column) else srvyr::as_survey(df)
+  df <- if (weights) srvyr::as_survey(df, strata = dplyr::all_of(strata), weight = dplyr::all_of(weight_column)) else srvyr::as_survey(df)
 
   # --- Placeholder functions if missing --------------------------------------
 
@@ -439,6 +445,7 @@ survey_analysis <- function(df,
 
   close(pb)
 
+  ###
   output_result <- dplyr::bind_rows(res_list) |>
     tidyr::separate(variable_val, c("question", "options"), sep = "\\.", extra = "merge") |>
     dplyr::mutate(
@@ -447,7 +454,8 @@ survey_analysis <- function(df,
       choice = dplyr::case_when(main_variable == choice ~ NA_character_, TRUE ~ choice)
     ) |>
     dplyr::select(main_variable, choice, dplyr::everything()) |>
-    dplyr::select(-variable, -question, -options)
+    dplyr::select(-variable, -question, -options) |>
+    suppressWarnings()
 
   # --- Merge label info (optional) --------------------------------------------
   if (question_lable && !is.null(kobo_path)) {

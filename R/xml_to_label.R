@@ -128,7 +128,7 @@ rename_xml_to_label_col <- function(data,survey,choices,label){
 #' @keywords internal
 replace_value <- function(provider, lookup_table) {
   # Collect labels whose ids are detected within `provider`
-  matches <- lookup_table$choice_lab[sapply(lookup_table$choice_id, function(x) string::str_detect(provider, x))]
+  matches <- lookup_table$choice_lab[sapply(lookup_table$choice_id, function(x) stringr::str_detect(provider, x))]
 
   if (length(matches) > 0) {
     return(paste(matches, collapse = ", "))
