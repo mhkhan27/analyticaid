@@ -1,5 +1,5 @@
 
-### analyticaid <img src='man/figures/analyticaid.png' align="right" height="40.5" />
+# analyticaid <img src="man/figures/analyticaid.png" align="right" width="80" />
 
 <!-- badges: start -->
 
