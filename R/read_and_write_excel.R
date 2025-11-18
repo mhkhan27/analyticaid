@@ -144,7 +144,7 @@ write_formatted_excel <- function(write_list,output_path,
 
     addWorksheet(wb,dataset_name)
     writeData(wb, sheet = i,dataset, rowNames = F)
-    addFilter(wb,sheet =  i, row = 1, cols = 1:ncol(dataset))
+    addFilter(wb,sheet =  i, rows = 1, cols = 1:ncol(dataset))
     freezePane(wb, sheet = i, firstCol = TRUE, firstRow = T)
     addStyle(wb, sheet = i, headerStyle, rows = 1, cols = 1:ncol(dataset), gridExpand = TRUE)
     addStyle(wb, sheet = i, bodyStyle, rows = 1:nrow(dataset)+1, cols = 1:ncol(dataset), gridExpand = TRUE)
