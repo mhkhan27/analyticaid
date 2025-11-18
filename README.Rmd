@@ -33,7 +33,7 @@ library(tidyr)
 
 
 ## Overview
-analyticaid is designed for making the data analysis easy and less time consuming. The package is based on tidyr, dplyr,srvyr packages. Most common functions are- 
+analyticaid is designed for making the data analysis easy and less time consuming. The package is based on tidyr, dplyr,srvyr packages.
 
 ## Installation
 

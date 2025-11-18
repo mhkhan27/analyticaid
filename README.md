@@ -13,8 +13,7 @@ badge](https://img.shields.io/badge/STATUS-UNDER%20DEVELOPMENT-%23007CE0)](https
 ## Overview
 
 analyticaid is designed for making the data analysis easy and less time
-consuming. The package is based on tidyr, dplyr,srvyr packages. Most
-common functions are-
+consuming. The package is based on tidyr, dplyr,srvyr packages.
 
 ## Installation
 
