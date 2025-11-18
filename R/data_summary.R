@@ -1,6 +1,6 @@
 #' Summarize Unique Values and Basic Statistics for Kobo-Style Datasets
 #'
-#' `df_unique_values()` inspects each column of a dataframe and produces a
+#' `df_summary()` inspects each column of a dataframe and produces a
 #' summary containing the number of unique values, the list of unique values,
 #' and a formatted statistics string.
 #'
@@ -59,16 +59,16 @@
 #'   consent = c(TRUE, FALSE, TRUE)
 #' )
 #'
-#' df_unique_values(df)
+#' df_summary(df)
 #'
-#' df_unique_values(df, max_unique = 10, top_reported_col = 2)
+#' df_summary(df, max_unique = 10, top_reported_col = 2)
 #' }
 #'
 #' @export
 
 
 
-df_unique_values <- function(df, max_unique = 20,top_reported_col = 3) {
+df_summary <- function(df, max_unique = 20,top_reported_col = 3) {
 
   cols <- df |>
     dplyr::select(

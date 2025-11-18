@@ -9,7 +9,7 @@ testthat::test_that("Function returns expected structure", {
     X_flag = c("x", "x", "y")     # should be excluded
   )
 
-  out <- df_unique_values(df)
+  out <- df_summary(df)
 
   expect_s3_class(out, "data.frame")
   expect_true(all(c("column", "n_unique", "unique_values", "top_stats") %in% names(out)))
@@ -21,7 +21,7 @@ test_that("Numeric columns compute mean/median/sd correctly", {
 
   df <- data.frame(num = c(10, 20, 30, NA))
 
-  out <- df_unique_values(df)
+  out <- df_summary(df)
 
   row <- out |> filter(column == "num")
 
@@ -36,7 +36,7 @@ test_that("Categorical top-x summary works", {
 
   df <- data.frame(cat = c("a","a","b","c"))
 
-  out <- df_unique_values(df, top_reported_col = 2)
+  out <- df_summary(df, top_reported_col = 2)
   row <- out |> filter(column == "cat")
 
   # Should show only a and b (top 2)
@@ -51,7 +51,7 @@ test_that("Logical columns summarize correctly", {
 
   df <- data.frame(flag = c(TRUE, FALSE, TRUE, TRUE))
 
-  out <- df_unique_values(df)
+  out <- df_summary(df)
   row <- out |> filter(column == "flag")
 
   expect_true(grepl("TRUE", row$top_stats))
