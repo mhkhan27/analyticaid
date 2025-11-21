@@ -43,6 +43,7 @@
 #' @export
 #' @importFrom utils unzip
 #' @importFrom utils read.table
+#' @importFrom utils unz
 #' @importFrom dplyr rename filter pull select rowwise mutate ungroup
 #' @importFrom stringr str_detect str_split
 #' @importFrom purrr map set_names map_dbl
@@ -80,7 +81,8 @@ create_audit_list <- function(audit_zip_path,
     look_up_vector <- dataset[[uuid_column]]
 
     if (any(!all_uuid_df$uuid %in% look_up_vector)) {
-      msg <- glue::glue(nrow(all_uuid_df) - length(look_up_vector), " audit files are found but not in the dataset. They won't be read.")
+      extra_audits <- sum(!all_uuid_df$uuid %in% look_up_vector)
+      msg <- glue::glue(extra_audits, " audit files are found but not in the dataset. They won't be read.")
       warning(msg)
     }
 
@@ -89,8 +91,15 @@ create_audit_list <- function(audit_zip_path,
   }
 
   list_of_audits <- all_uuid_df$path |>
-    purrr::map(~ read.table(unz(audit_zip_path, filename = .x), header = TRUE, quote = "\"", sep = ",")) |>
+    purrr::map(~ read.table(utils::unz(audit_zip_path, filename = .x), header = TRUE, quote = "\"", sep = ",")) |>
     purrr::set_names(all_uuid_df$uuid)
+
+  empty_audit <- if (length(list_of_audits) > 0) {
+    list_of_audits[[1]] |>
+      dplyr::slice(0)
+  } else {
+    data.frame(event = character(), node = character(), start = numeric(), end = numeric())
+  }
 
   if (!is.null(dataset)) {
     if (length(list_of_audits) < length(look_up_vector)) {
@@ -98,7 +107,7 @@ create_audit_list <- function(audit_zip_path,
       msg <- glue::glue(length(to_add_vector), " audit files were not found. They were added as empty dataframes.")
       warning(msg)
       to_add <- purrr::map(to_add_vector, function(xx) {
-        list_of_audits[[1]] |> dplyr::filter(event == "IWANTANEMPTYAUDIT")
+        empty_audit
       }) |>
         purrr::set_names(to_add_vector)
 
